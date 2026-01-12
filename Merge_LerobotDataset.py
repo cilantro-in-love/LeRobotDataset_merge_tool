@@ -1,6 +1,8 @@
 import shutil
 import os
 import json
+
+import pandas as pd
 src_dir = "/home/dudu/.cache/huggingface/lerobot/zhengzi/lerobot_second_0"  # 原始文件所在文件夹
 dst_dir = "/home/dudu/.cache/huggingface/lerobot/zhengzi/lerobot_second"  # 目标文件夹
 
@@ -136,4 +138,11 @@ if os.path.exists(src_episodes) and os.path.exists(dst_episodes):
 
     print(f"\n--- 任务完成 ---")
 
+for i in range(dst_files_count, dst_files_count+src_files_count):
+    source_file = f"{dst_data_path}/episode_{i:06d}.parquet"
+    df = pd.read_parquet(source_file)
+    df["index"] = df["index"] + global_index_offset
+    df["episode_index"] = df["episode_index"] + episode_offset
+    df.to_parquet(f"{dst_data_path}/episode_{i:06d}.parquet", index=False)
+    print(f"{dst_data_path}/episode_{i:06d}.parquet 已追加")
 
